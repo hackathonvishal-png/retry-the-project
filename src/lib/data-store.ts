@@ -1,8 +1,3 @@
-import { create } from 'zustand';
-
-// We'll use a simple store pattern without zustand dependency
-// Using React context instead
-
 export interface DataColumn {
   name: string;
   type: 'string' | 'number' | 'date';
