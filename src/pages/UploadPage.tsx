@@ -5,27 +5,28 @@ import { useData } from '@/contexts/DataContext';
 import { useNavigate } from 'react-router-dom';
 
 const UploadPage = () => {
-  const { dataset, uploadCSV, loadDemo } = useData();
+  const { dataset, uploadFile, loadDemo } = useData();
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleFile = useCallback(async (file: File) => {
-    if (!file.name.endsWith('.csv')) {
-      setError('Please upload a CSV file');
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (!['csv', 'xlsx', 'xls', 'json'].includes(ext || '')) {
+      setError('Please upload a CSV, Excel (.xlsx), or JSON file');
       return;
     }
     setError(null);
     setIsUploading(true);
     try {
-      await uploadCSV(file);
+      await uploadFile(file);
     } catch (e) {
-      setError('Failed to parse CSV file');
+      setError('Failed to parse file');
     } finally {
       setIsUploading(false);
     }
-  }, [uploadCSV]);
+  }, [uploadFile]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -38,7 +39,7 @@ const UploadPage = () => {
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold text-foreground">Upload Data</h1>
-        <p className="text-sm text-muted-foreground mt-1">Upload a CSV file to start analyzing with AI</p>
+        <p className="text-sm text-muted-foreground mt-1">Upload a CSV, Excel, or JSON file to start analyzing with AI</p>
       </motion.div>
 
       {/* Drop Zone */}
@@ -57,7 +58,7 @@ const UploadPage = () => {
         <input
           id="file-input"
           type="file"
-          accept=".csv"
+          accept=".csv,.xlsx,.xls,.json"
           className="hidden"
           onChange={e => {
             const file = e.target.files?.[0];
@@ -72,9 +73,9 @@ const UploadPage = () => {
           </div>
           <div>
             <p className="text-sm font-medium text-foreground">
-              {isUploading ? 'Processing...' : 'Drop your CSV here or click to browse'}
+              {isUploading ? 'Processing...' : 'Drop your file here or click to browse'}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Supports .csv files up to 50MB</p>
+            <p className="text-xs text-muted-foreground mt-1">Supports .csv, .xlsx, .xls, and .json files up to 50MB</p>
           </div>
         </div>
       </motion.div>
