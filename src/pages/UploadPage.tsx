@@ -5,7 +5,7 @@ import { useData } from '@/contexts/DataContext';
 import { useNavigate } from 'react-router-dom';
 
 const UploadPage = () => {
-  const { dataset, uploadCSV, loadDemo } = useData();
+  const { dataset, uploadFile, loadDemo } = useData();
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
